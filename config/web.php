@@ -45,13 +45,9 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => false,
-	'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host' => 'mail.niaepnn.ru',
-                'username' => 'niaepnn\6676',
-                'password' => 'Qw122015',
-                'port' => '25',
-                'encryption' => 'tls',
+            'transport' => [
+                'class' => 'yii\swiftmailer\Mailer',
+                'useFileTransport' => true,
             ],
         ],
         'log' => [
@@ -62,11 +58,6 @@ $config = [
                     'levels' => ['error', 'warning'],
                 ],
             ],
-        ],
-        'db' => require(__DIR__ . '/db.php'),
-        'mongodb' => [
-            'class' => '\yii\mongodb\Connection',
-            'dsn' => 'mongodb://localhost:27017/teleport',
         ],
     ],
     'params' => $params,

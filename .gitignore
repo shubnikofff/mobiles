@@ -9,9 +9,6 @@ nbproject
 .project
 .settings
 
-# windows thumbnail cache
-Thumbs.db
-
 # composer vendor dir
 /vendor
 
@@ -27,3 +24,10 @@ phpunit.phar
 /phpunit.xml
 
 tests/_output/*
+
+composer.lock
+docker-compose.yml
+xdebug.ini
+php.ini
+mobiles.local.conf
+config/web-local.php
