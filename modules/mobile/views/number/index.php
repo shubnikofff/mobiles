@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<?php $this->title = 'Служебная сотовая связь'; ?>
+<?php $this->title = 'База номеров'; ?>
 
     <div id="mobileNumberIndexView">
 

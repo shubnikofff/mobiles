@@ -4,9 +4,11 @@ $params = require(__DIR__ . '/params.php');
 
 $config = [
     'id' => 'teleport',
+    'name' => 'Сотовая связь',
     'language' => 'ru',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'defaultRoute' => '/mobile/number/index',
     'aliases' => [
         '@mobile' => '@app/modules/mobile',
         '@directory' => '@app/modules/directory',
@@ -14,7 +16,6 @@ $config = [
     'modules' => [
         'mobile' => [
             'class' => 'app\modules\mobile\Module',
-            'layout' => 'main'
         ],
         'directory' => [
             'class' => 'app\modules\directory\Module',

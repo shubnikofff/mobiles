@@ -28,7 +28,7 @@ AppAsset::register($this);
     <div class="wrap">
         <?php
             NavBar::begin([
-                'brandLabel' => 'Телепорт',
+                'brandLabel' => Yii::$app->name,
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -37,16 +37,10 @@ AppAsset::register($this);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => [
-                    ['label' => 'Телефонный справочник', 'url' => ['/site/index']],
-                    [
-                        'label' => 'ОСКР',
-                        'items' => [
-                            ['label' => 'Сотовая связь', 'url' => ['/mobile/number']],
-                            ['label' => 'Внутренняя связь', 'url' => '#'],
-                            ['label' => 'Заявки', 'url' => '#'],
-                        ],
-                    ],
-                    ['label' => 'Помощь', 'url' => ['/site/about']],
+                    ['label' => 'База номеров', 'url' => ['/mobile/number/index']],
+                    ['label' => 'Биллинг', 'url' => ['/mobile/billing/index']],
+                    ['label' => 'Отчеты', 'url' => ['/mobile/report/index']],
+                    ['label' => 'Командировачные', 'url' => ['/mobile/trip/index']],
                     /*['label' => 'Написать нам', 'url' => ['/site/contact']],
                     Yii::$app->user->isGuest ?
                         ['label' => 'Вход', 'url' => ['/site/login']] :
