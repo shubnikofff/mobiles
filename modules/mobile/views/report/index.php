@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use kartik\helpers\Html;
 use kartik\file\FileInput;
 use yii\helpers\Url;
 use yii\bootstrap\Alert;
@@ -14,7 +14,7 @@ $this->title = 'Отчёты';
 ?>
 <div>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?= Html::pageHeader($this->title) ?>
 
     <?php if (Yii::$app->session->hasFlash('reportCreated')) {
         echo Alert::widget([

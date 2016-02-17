@@ -20,6 +20,9 @@ $config = [
         'directory' => [
             'class' => 'app\modules\directory\Module',
         ],
+        'datecontrol' =>  [
+            'class' => '\kartik\datecontrol\Module'
+        ]
     ],
     'components' => [
         'request' => [
@@ -65,26 +68,24 @@ $config = [
 ];
 
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
+
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
+        'allowedIPs' => ['127.0.0.1', '::1', '192.168.99.*'],
         'panels' => [
             'mongodb' => [
                 'class' => 'yii\mongodb\debug\MongoDbPanel',
             ],
-        ]
+        ],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'generators' => [
-            'mongoDbModel' => [
-                'class' => 'yii\mongodb\gii\model\Generator'
-            ]
-        ],
+        'allowedIPs' => ['127.0.0.1', '::1', '192.168.99.*']
     ];
+
 }
 
 return $config;
