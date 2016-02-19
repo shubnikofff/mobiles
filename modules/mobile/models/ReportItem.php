@@ -33,6 +33,19 @@ class ReportItem extends ActiveRecord{
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'number' => 'Номер',
+            'employee' => 'Сотрудник',
+            'limit' => 'Лимит',
+            'expenditure' => 'Расход',
+            'overrun' => 'Перерасход',
+            'comment' => 'Коментарий'
+        ];
+    }
+
+
     public function getReport() {
         return $this->hasOne(Report::className(),['_id' => 'reportId']);
     }

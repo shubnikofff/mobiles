@@ -94,7 +94,6 @@ class NumberSearch extends Number
         return array_merge([self::OPERATOR_ANY => 'Выберите оператора'], Operator::items());
     }
 
-
     public function getDestinations()
     {
         return array_merge([self::DESTINATION_ANY => 'Любая'], parent::destinationItems());

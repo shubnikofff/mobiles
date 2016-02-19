@@ -8,6 +8,7 @@
 namespace app\modules\mobile\controllers;
 use app\modules\mobile\models\Billing;
 use yii\web\Controller;
+use yii\web\Response;
 
 
 /**
@@ -27,5 +28,11 @@ class BillingController extends Controller
             'searchModel' => $model,
             'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionItemsList($q)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        return Billing::itemsList($q);
     }
 }

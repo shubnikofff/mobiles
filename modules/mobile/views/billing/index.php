@@ -8,6 +8,8 @@ use kartik\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datecontrol\DateControl;
 use kartik\select2\Select2;
+use yii\web\JsExpression;
+use yii\widgets\Pjax;
 
 /**
  * @var $this \yii\web\View
@@ -21,6 +23,7 @@ $this->title = "Биллинг";
     <?= Html::pageHeader($this->title) ?>
 
     <?php $form = ActiveForm::begin([
+        'id' => 'billing-form',
         'method' => 'get',
         'layout' => 'inline'
     ]) ?>
@@ -28,6 +31,7 @@ $this->title = "Биллинг";
     <?= $form->field($searchModel, 'periodInput')->widget(DateControl::className(), [
         'type' => DateControl::FORMAT_DATE,
         'options' => [
+            'options' => ['placeholder' => 'Период...'],
             'pluginOptions' => [
                 'autoclose' => true,
                 'minViewMode' => 1,
@@ -38,18 +42,41 @@ $this->title = "Биллинг";
 
     ]) ?>
 
+    <?= $form->field($searchModel, 'operatorId')->dropDownList($searchModel::operatorList())?>
+
     <?= $form->field($searchModel, 'items')->widget(Select2::className(), [
+        'showToggleAll' => false,
         'options' => [
             'multiple' => true,
+            'placeholder' => 'Номер или имя сотрудника...'
         ],
         'pluginOptions' => [
-            'width' => '600px'
-        ],
-        'data' => [1,2,3]
+            'width' => '600',
+            'allowClear' => true,
+            'minimumInputLength' => 3,
+            'ajax' => [
+                'url' => \yii\helpers\Url::to(['items-list']),
+                'dataType' => 'json',
+                'data' => new JsExpression('function(params) { return {q:params.term}; }'),
+                'delay' => 250
+            ],
+            'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+            'templateResult' => new JsExpression('function(item) {return item.number; }'),
+            'templateSelection' => new JsExpression('function (item) {return item.number; }'),
+        ]
     ]) ?>
 
-    <?= Html::submitButton('Ок', ['class' => 'btn btn-primary']) ?>
+    <?= Html::submitButton('Найти', ['class' => 'btn btn-primary']) ?>
 
     <?php ActiveForm::end() ?>
+
+    <?php Pjax::begin([
+        'formSelector' => '#billing-form',
+        'options' => ['style' => 'padding: 20px 0']
+    ]) ?>
+
+    <?= $this->render('_grid', ['dataProvider' => $dataProvider]) ?>
+
+    <?php Pjax::end(); ?>
 
 </div>

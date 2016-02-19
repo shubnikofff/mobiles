@@ -6,16 +6,18 @@
  */
 
 namespace app\modules\mobile\models;
+
+use app\modules\directory\models\Employee;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-
+use yii\mongodb\Query;
+use yii\mongodb\validators\MongoIdValidator;
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
  * Billing
  */
-
 class Billing extends Model
 {
     const PERIOD_DELIMITER = '/';
@@ -28,23 +30,27 @@ class Billing extends Model
      */
     public $items;
     /**
+     * @var mixed
+     */
+    public $operatorId;
+    /**
      * @var array
      */
     private $_period;
     /**
      * @var array
      */
-    private $_numbers;
+    private $_numbers = [];
     /**
      * @var array
      */
-    private $_employees;
+    private $_employees = [];
 
     public function rules()
     {
         return [
-            [['periodInput', 'items'], 'required'],
-            ['periodInput', 'filter', 'filter' => function($value) {
+            [['periodInput', 'items', 'operatorId'], 'required'],
+            ['periodInput', 'filter', 'filter' => function ($value) {
                 $period = explode(self::PERIOD_DELIMITER, $value);
                 $this->_period = [
                     'month' => $period[0],
@@ -52,34 +58,37 @@ class Billing extends Model
                 ];
                 return $value;
             }],
-            ['items', 'filter', 'filter' => function($value) {
+            ['operatorId', MongoIdValidator::className(), 'forceFormat' => 'object'],
+            ['operatorId', 'exist', 'targetClass' => Operator::className(), 'targetAttribute' => '_id'],
+            ['items', 'filter', 'filter' => function ($value) {
                 foreach ($value as $item) {
                     if (is_numeric($item)) {
                         $this->_numbers[] = $item;
                     } else {
                         $this->_employees[] = $item;
                     }
+                    $res[$item] = $item;
                 }
                 return $value;
             }]
         ];
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'periodInput' => 'Период',
-            'items' => 'Номер или имя сотрудника'
-        ];
-    }
-
-
+    /**
+     * @param array $params
+     * @return ActiveDataProvider
+     */
     public function search($params)
     {
         $query = ReportItem::find();
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query
+            'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'employee' => SORT_ASC
+                ]
+            ]
         ]);
 
         if (!$this->load($params) || !$this->validate()) {
@@ -88,16 +97,39 @@ class Billing extends Model
         }
 
         /** @var Report $report */
-        $report = Report::findOne(['period' => $this->_period]);
+        $report = Report::findOne(['operatorId' => $this->operatorId, 'period' => $this->_period]);
 
-        if (!is_null($report)) {
-            $query->andWhere(['reportId' => $report->primaryKey]);
-        }
+        $query->andWhere(['reportId' => $report->primaryKey]);
 
-        $query->andWhere(['number' => ['$in' => $this->_numbers]]);
-
-        $query->andWhere(['employee' => ['$in' => $this->_employees]]);
+        $query->andWhere(['or', ['number' => ['$in' => $this->_numbers]], ['employee' => ['$in' => $this->_employees]]]);
 
         return $dataProvider;
+    }
+
+    /**
+     * @param $queryParam
+     * @return array
+     */
+    static public function itemsList($queryParam)
+    {
+        if (is_numeric($queryParam)) {
+            $query = new Query();
+            $query->select(['_id' => false, 'number' => 'text'])->from(Number::collectionName())->where(['like', 'number', $queryParam]);
+        } else {
+            $query = new \yii\db\Query();
+            $query->select(["CONCAT_WS(' ',last_name, first_name, middle_name) AS number"])->from(Employee::tableName())->where(['like', 'last_name', $queryParam]);
+        }
+
+        $items['results'] = array_map(function ($item) {
+            $item['id'] = $item['number'];
+            return $item;
+        }, $query->limit(10)->all());
+
+        return $items;
+    }
+
+    static public function operatorList()
+    {
+        return Operator::items();
     }
 }
