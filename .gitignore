@@ -29,6 +29,6 @@ composer.lock
 docker-compose.yml
 xdebug.ini
 php.ini
-mobiles.local.conf
+mobile.local.conf
 config/web-local.php
 web/index.php

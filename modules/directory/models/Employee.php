@@ -63,19 +63,10 @@ class Employee extends ActiveRecord
         return implode(' ', [$this->last_name, $this->first_name, $this->middle_name]);
     }
 
-    /**
-     * @return string
-     */
-    /*public function getPost()
+    public function getDivision()
     {
-        return $this->post;
+
     }
-
-    public function getPosts()
-    {
-        return $this->post;
-    }*/
-
 
     /**
      * Build query with full name condition

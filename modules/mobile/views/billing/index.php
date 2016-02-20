@@ -66,7 +66,7 @@ $this->title = "Биллинг";
         ]
     ]) ?>
 
-    <?= Html::submitButton('Найти', ['class' => 'btn btn-primary']) ?>
+    <?= Html::submitButton('<span class="glyphicon glyphicon-search"></span>', ['class' => 'btn btn-primary']) ?>
 
     <?php ActiveForm::end() ?>
 
