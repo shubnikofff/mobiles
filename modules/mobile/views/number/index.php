@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use kartik\helpers\Html;
 use app\modules\mobile\assets\NumberAsset;
 use yii\helpers\Json;
 use yii\widgets\Pjax;
@@ -11,11 +11,11 @@ use yii\widgets\Pjax;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<?php $this->title = 'Служебная сотовая связь'; ?>
+<?php $this->title = 'База номеров'; ?>
 
     <div id="mobileNumberIndexView">
 
-        <h1><?= Html::encode($this->title) ?></h1>
+        <?= Html::pageHeader($this->title) ?>
 
         <?= $this->render('_search', ['model' => $searchModel]); ?>
 

@@ -2,13 +2,13 @@
 /* @var $this yii\web\View */
 /* @var $dataProvider \yii\data\ActiveDataProvider */
 /* @var $searchModel \app\modules\mobile\models\TripSearch */
-use yii\helpers\Html;
+use kartik\helpers\Html;
 use app\components\widgets\ContainerLoader;
 
 $this->title = 'Командировочные номера';
 ?>
 
-<h1><?= Html::encode($this->title) ?></h1>
+<?= Html::pageHeader($this->title) ?>
 
 <?php ContainerLoader::begin() ?>
 

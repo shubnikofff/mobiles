@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use app\components\widgets\ActiveRadioList;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\mobile\models\ReportSearch */
