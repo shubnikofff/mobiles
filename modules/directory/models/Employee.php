@@ -63,11 +63,6 @@ class Employee extends ActiveRecord
         return implode(' ', [$this->last_name, $this->first_name, $this->middle_name]);
     }
 
-    public function getDivision()
-    {
-
-    }
-
     /**
      * Build query with full name condition
      * @param mixed $name

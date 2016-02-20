@@ -12,7 +12,7 @@ namespace app\modules\directory\controllers;
 use app\modules\directory\models\Employee;
 use yii\helpers\Json;
 use yii\web\Controller;
-
+//TODO:controller should be deleted
 class EmployeeController extends Controller{
 
     public function actionAutoComplete($q = null) {

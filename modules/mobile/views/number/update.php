@@ -11,7 +11,10 @@ use app\components\widgets\ModalView;
 
 ModalView::begin([
     'modalOptions' => [
-        'header' => "<p class='h3'>Номер {$model->number}<p>"
+        'header' => "<p class='h3'>Номер {$model->number}<p>",
+        'options' => [
+            'tabindex' => false
+        ],
     ],
     'buttons' => [
         [

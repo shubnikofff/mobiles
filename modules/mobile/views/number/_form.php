@@ -36,7 +36,7 @@ use app\modules\mobile\models\Document;
 
 <?= $model->isNewRecord ? $form->field($model, 'number', ['enableClientValidation' => true]) : null ?>
 
-<?= $form->field($model, 'ownerName')->widget(Typeahead::className(), [
+<?/*= $form->field($model, 'ownerName')->widget(Typeahead::className(), [
     'pluginOptions' => ['highlight' => true],
     'pluginEvents' => [
         "typeahead:selected" => 'function(e, suggestion){$(\'input[name="' . $model->formName() . '[ownerPost]"]\').val(suggestion[\'post\']);}',
@@ -50,9 +50,30 @@ use app\modules\mobile\models\Document;
             'limit' => 5
         ]
     ]
-]) ?>
+]) */?><!--
 
-<?= $form->field($model, 'ownerPost') ?>
+--><?/*= $form->field($model, 'ownerPost') */?>
+
+<?= $form->field($model, 'ownerId')->widget(\kartik\select2\Select2::className(), [
+    'showToggleAll' => false,
+    'options' => [
+        'placeholder' => 'Имя сотрудника...'
+    ],
+    'pluginOptions' => [
+        'allowClear' => true,
+        'initValueText' => '123124',
+        'minimumInputLength' => 3,
+        'ajax' => [
+            'url' => \yii\helpers\Url::to(['owner-list']),
+            'dataType' => 'json',
+            'data' => new JsExpression('function(params) { return {q:params.term}; }'),
+            'delay' => 250
+        ],
+        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+        'templateResult' => new JsExpression("function(item) {return '<b>' + item.name + '</b><p><small>' + item.post + ' (' + item.division + ')</small></p>'; }"),
+        'templateSelection' => new JsExpression('function (item) {return item.name; }'),
+    ]
+])?>
 
 <?= $form->field($model, 'operatorId')->dropDownList(Operator::items()) ?>
 

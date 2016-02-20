@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\mobile\models\Document;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -173,5 +174,11 @@ class NumberController extends Controller
         } else {
             throw new NotFoundHttpException('Документ не найден.');
         }
+    }
+
+    public function actionOwnerList($q)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Number::ownerList($q);
     }
 }

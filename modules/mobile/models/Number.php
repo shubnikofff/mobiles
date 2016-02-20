@@ -5,10 +5,12 @@ namespace app\modules\mobile\models;
 use app\components\validators\EmployeeNameValidator;
 use Yii;
 use app\modules\directory\models\Employee;
+use yii\db\Query;
 use yii\mongodb\ActiveQuery;
 use yii\mongodb\ActiveRecord;
 use yii\web\UploadedFile;
 use MongoDate;
+use yii\mongodb\validators\MongoIdValidator;
 
 /**
  * This is the model class for collection "mobile.number".
@@ -39,9 +41,6 @@ class Number extends ActiveRecord
     const OPTION_TRIP = 'trip';
     const OPTION_DIRECTORY = 'directory';
 
-    public $ownerName;
-    public $ownerPost;
-
     /**
      * @return string
      */
@@ -70,12 +69,10 @@ class Number extends ActiveRecord
 
     public function init()
     {
-        $this->ownerId = null;
         $this->destination = self::DESTINATION_PHONE;
         $this->limit = null;
         $this->options = [];
         $this->history = [];
-        $this->comment = "";
     }
 
     /**
@@ -84,8 +81,8 @@ class Number extends ActiveRecord
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios['create'] = ['number', 'ownerName', 'ownerPost', 'operatorId', 'destination', 'limit', 'options', 'comment'];
-        $scenarios['update'] = ['ownerName', 'ownerPost', 'operatorId', 'destination', 'limit', 'options', 'comment'];
+        $scenarios['create'] = ['number', 'ownerId', 'operatorId', 'destination', 'limit', 'options', 'comment'];
+        $scenarios['update'] = ['ownerId', 'operatorId', 'destination', 'limit', 'options', 'comment'];
         return $scenarios;
     }
 
@@ -95,16 +92,17 @@ class Number extends ActiveRecord
     public function rules()
     {
         return [
-            [['number','operatorId'], 'required'],
+            [['number', 'operatorId'], 'required'],
             ['number', 'match', 'pattern' => '/^9[0-9]{9}$/'],
             ['number', 'unique'],
+            ['ownerId', 'exist', 'targetClass' => Employee::className(), 'targetAttribute' => 'id'],
             ['limit', 'integer', 'min' => 0],
-            ['limit', function($attribute){
-                if($this->accounting && empty($this->$attribute)){
+            ['limit', function ($attribute) {
+                if ($this->accounting && empty($this->$attribute)) {
                     $this->addError($attribute, "При выбранной опции «Учитывать перерасход» лимит должен быть указан");
                 }
-            },'skipOnEmpty' => false],
-            ['ownerName', EmployeeNameValidator::className(),'postAttribute' => 'ownerPost'],
+            }, 'skipOnEmpty' => false],
+            ['operatorId', MongoIdValidator::className(), 'forceFormat' => 'object'],
             ['operatorId', 'exist', 'targetClass' => Operator::className(), 'targetAttribute' => '_id'],
             ['destination', 'in', 'range' => [self::DESTINATION_MODEM, self::DESTINATION_PHONE]],
             ['options', function ($attribute) {
@@ -115,7 +113,7 @@ class Number extends ActiveRecord
                     }
                 }
             }],
-            [['comment','ownerPost'], 'safe']
+            ['comment', 'safe']
         ];
     }
 
@@ -126,11 +124,10 @@ class Number extends ActiveRecord
     {
         return [
             'number' => 'Номер',
-            'ownerName' => 'Имя сотрудника',
-            'ownerPost' => 'Должность сотрудника',
+            'ownerId' => 'Сотрудник',
             'isTrip' => 'Командиоровочная',
             'operatorId' => 'Оператор',
-            'destination' => 'Область применения',
+            'destination' => 'Используется как',
             'options' => 'Опции',
             'limit' => 'Лимит',
             'newDocuments' => 'Новые документы',
@@ -141,9 +138,6 @@ class Number extends ActiveRecord
     public function load($data, $formName = null)
     {
         if (parent::load($data, $formName)) {
-            if($operator = Operator::findOne($this->operatorId)) {
-                $this->operatorId = $operator->getPrimaryKey();
-            }
             $this->options = is_array($this->options) ? array_values($this->options) : [];
             return true;
         } else return false;
@@ -237,8 +231,8 @@ class Number extends ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if (in_array($this->scenario, ['create', 'update'])) {
-                $owner = Employee::findByName($this->ownerName)->andWhere(['post' => $this->ownerPost])->one();
-                $this->ownerId = $owner instanceof Employee ? $owner->getPrimaryKey() : null;
+                //$owner = Employee::findByName($this->ownerName)->andWhere(['post' => $this->ownerPost])->one();
+                //$this->ownerId = $owner instanceof Employee ? $owner->getPrimaryKey() : null;
                 $this->updateHistory();
             }
             if (!empty($this->limit)) {
@@ -285,7 +279,7 @@ class Number extends ActiveRecord
         if ($document->save()) {
             return true;
         } else {
-            throw new \RuntimeException(__METHOD__ . ": unable attach document '{$document->filename}': ".implode(", ",array_keys($document->getErrors()))." is invalid");
+            throw new \RuntimeException(__METHOD__ . ": unable attach document '{$document->filename}': " . implode(", ", array_keys($document->getErrors())) . " is invalid");
         }
     }
 
@@ -309,5 +303,20 @@ class Number extends ActiveRecord
             $this->history = $history;
         }
         return $this->history;
+    }
+
+    /**
+     * @param $param
+     * @return array
+     */
+    static public function ownerList($param)
+    {
+        $list['results'] = (new Query())
+            ->select(['e.id', 'concat_ws(" ", e.last_name, e.first_name, e.middle_name) as name', 'e.post', 'b.branch_name as division'])
+            ->from(['e' => Employee::tableName()])
+            ->leftJoin('branches b', 'e.branch = b.id')
+            ->where(['like', 'last_name', $param])->all();
+
+        return $list;
     }
 }
