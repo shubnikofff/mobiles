@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\mobile\models\Document;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -78,13 +79,6 @@ class NumberController extends Controller
         $model->setScenario('update');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('numberSaved', 'Данные успешно обновлены');
-            if (empty($model->ownerName)) {
-                $model->ownerPost = "";
-            }
-        } else {
-            $owner = $model->owner;
-            $model->ownerName = $owner->fullName;
-            $model->ownerPost = $owner->post;
         }
 
         if (Yii::$app->request->isAjax) {
@@ -108,6 +102,7 @@ class NumberController extends Controller
 
     public function actionAttachDocument($ownerId)
     {
+        /** @var Number $number */
         $number = Number::findOne($ownerId);
         if ($number === null) {
             throw new \RuntimeException("Не найден номер к которому нужно прикрепить документ");
@@ -173,5 +168,11 @@ class NumberController extends Controller
         } else {
             throw new NotFoundHttpException('Документ не найден.');
         }
+    }
+
+    public function actionOwnerList($q)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Number::ownerList($q);
     }
 }

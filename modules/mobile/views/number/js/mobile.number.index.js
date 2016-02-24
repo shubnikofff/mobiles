@@ -63,9 +63,9 @@
             initUpdateControl();
         });
 
-        $(teleport.$commonContainer).on('modalView.actionDone', function () {
+        /*$(teleport.$commonContainer).on('modalView.actionDone', function () {
             $.pjax.reload(settings.pjaxContainer);
-        });
+        });*/
 
         initUpdateControl();
 

@@ -4,7 +4,6 @@ use kartik\helpers\Html;
 use app\modules\mobile\assets\NumberAsset;
 use yii\helpers\Json;
 use yii\widgets\Pjax;
-
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\mobile\models\NumberSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */

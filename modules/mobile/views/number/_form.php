@@ -5,22 +5,23 @@
  * Date: 06.05.15
  * Time: 10:39
  * @var $model \app\modules\mobile\models\Number
+ * @var $this \yii\web\View
  */
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Alert;
-use kartik\typeahead\Typeahead;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 use app\modules\mobile\models\Operator;
 use app\components\widgets\ActiveRadioList;
 use kartik\file\FileInput;
 use app\modules\mobile\models\Document;
+use yii\web\View;
 
 ?>
 
 <?php $form = ActiveForm::begin([
     'action' => Url::to($model->isNewRecord ? ['create'] : ['update', 'id' => (string)$model->getPrimaryKey()]),
-    'enableClientValidation' => false
+    'enableClientValidation' => false,
 ]) ?>
 
 <?php if (Yii::$app->session->hasFlash('numberSaved')) {
@@ -30,29 +31,40 @@ use app\modules\mobile\models\Document;
         ],
         'body' => Yii::$app->session->getFlash('numberSaved')
     ]);
-}
-
-?>
+} ?>
 
 <?= $model->isNewRecord ? $form->field($model, 'number', ['enableClientValidation' => true]) : null ?>
 
-<?= $form->field($model, 'ownerName')->widget(Typeahead::className(), [
-    'pluginOptions' => ['highlight' => true],
-    'pluginEvents' => [
-        "typeahead:selected" => 'function(e, suggestion){$(\'input[name="' . $model->formName() . '[ownerPost]"]\').val(suggestion[\'post\']);}',
+<?php $formatJs = <<< 'JS'
+var formatEmployeeList = function(item) {
+    return '<b>' + item.name + '</b><p><small>' + item.post + ' (' + item.division + ')</small></p>';
+}
+var formatEmployeeSelection = function (employee) {
+    return employee.name || employee.text;
+}
+JS;
+$this->registerJs($formatJs, View::POS_HEAD); ?>
+
+<?= $form->field($model, 'ownerId')->widget(\kartik\select2\Select2::className(), [
+    'initValueText' => $model->owner->fullName,
+    'showToggleAll' => false,
+    'options' => [
+        'placeholder' => 'Имя сотрудника...'
     ],
-    'dataset' => [
-        [
-            'templates' => [
-                'suggestion' => new JsExpression("Handlebars.compile('<p>{{value}}</p><p class=\"text-muted small\"><em>{{post}}</em></p>')")
-            ],
-            'remote' => Url::to(['/directory/employee/auto-complete']) . '?q=%QUERY',
-            'limit' => 5
-        ]
+    'pluginOptions' => [
+        'allowClear' => true,
+        'minimumInputLength' => 3,
+        'ajax' => [
+            'url' => \yii\helpers\Url::to(['owner-list']),
+            'dataType' => 'json',
+            'data' => new JsExpression('function(params) { return {q:params.term}; }'),
+            'delay' => 250
+        ],
+        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+        'templateResult' => new JsExpression('formatEmployeeList'),
+        'templateSelection' => new JsExpression('formatEmployeeSelection'),
     ]
 ]) ?>
-
-<?= $form->field($model, 'ownerPost') ?>
 
 <?= $form->field($model, 'operatorId')->dropDownList(Operator::items()) ?>
 
@@ -102,4 +114,3 @@ use app\modules\mobile\models\Document;
 <?= $form->field($model, 'comment')->textarea() ?>
 
 <?php ActiveForm::end() ?>
-
