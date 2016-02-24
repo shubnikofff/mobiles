@@ -9,7 +9,6 @@
  */
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Alert;
-use kartik\typeahead\Typeahead;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 use app\modules\mobile\models\Operator;
@@ -23,7 +22,6 @@ use yii\web\View;
 <?php $form = ActiveForm::begin([
     'action' => Url::to($model->isNewRecord ? ['create'] : ['update', 'id' => (string)$model->getPrimaryKey()]),
     'enableClientValidation' => false,
-    'id' => 'number-form'
 ]) ?>
 
 <?php if (Yii::$app->session->hasFlash('numberSaved')) {
@@ -33,9 +31,7 @@ use yii\web\View;
         ],
         'body' => Yii::$app->session->getFlash('numberSaved')
     ]);
-}
-
-?>
+} ?>
 
 <?= $model->isNewRecord ? $form->field($model, 'number', ['enableClientValidation' => true]) : null ?>
 
@@ -47,9 +43,7 @@ var formatEmployeeSelection = function (employee) {
     return employee.name || employee.text;
 }
 JS;
-
 $this->registerJs($formatJs, View::POS_HEAD); ?>
-
 
 <?= $form->field($model, 'ownerId')->widget(\kartik\select2\Select2::className(), [
     'initValueText' => $model->owner->fullName,

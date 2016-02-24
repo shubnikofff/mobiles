@@ -79,13 +79,6 @@ class NumberController extends Controller
         $model->setScenario('update');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('numberSaved', 'Данные успешно обновлены');
-            /*if (empty($model->ownerName)) {
-                $model->ownerPost = "";
-            }*/
-        } else {
-            /*$owner = $model->owner;
-            $model->ownerName = $owner->fullName;
-            $model->ownerPost = $owner->post;*/
         }
 
         if (Yii::$app->request->isAjax) {

@@ -95,6 +95,9 @@ class Number extends ActiveRecord
             [['number', 'operatorId'], 'required'],
             ['number', 'match', 'pattern' => '/^9[0-9]{9}$/'],
             ['number', 'unique'],
+            ['ownerId', 'filter', 'filter' => function ($value) {
+               return empty($value) ? null : (int)$value;
+            }],
             ['ownerId', 'exist', 'targetClass' => Employee::className(), 'targetAttribute' => 'id'],
             ['limit', 'integer', 'min' => 0],
             ['limit', function ($attribute) {
