@@ -28,9 +28,8 @@ use app\modules\directory\models\Employee;
             </tr>
 
             <?php foreach ($history as $item): ?>
-                <?php $owner = Employee::findOne($item['ownerId']); ?>
                 <tr>
-                    <td><?= $owner->fullName?><p class="small"> <em><?= $owner->post?><em></p></td>
+                    <td><?= $item['ownerName']?><p class="small"> <em><?= $item['ownerPost']?><em></p></td>
                     <td><?= Yii::$app->formatter->asDate($item['rentDate']->toDateTime()) ?></td>
                     <td><?= array_key_exists('returnDate', $item) ? Yii::$app->formatter->asDate($item['returnDate']->toDateTime()) : "-" ?></td>
                 </tr>

@@ -234,8 +234,6 @@ class Number extends ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if (in_array($this->scenario, ['create', 'update'])) {
-                //$owner = Employee::findByName($this->ownerName)->andWhere(['post' => $this->ownerPost])->one();
-                //$this->ownerId = $owner instanceof Employee ? $owner->getPrimaryKey() : null;
                 $this->updateHistory();
             }
             if (!empty($this->limit)) {
@@ -299,7 +297,8 @@ class Number extends ActiveRecord
             }
             if (!is_null($this->ownerId)) {
                 $history[] = [
-                    'ownerId' => $this->ownerId,
+                    'ownerName' => $this->owner->fullName,
+                    'ownerPost' => $this->owner->post,
                     'rentDate' => new MongoDate(time())
                 ];
             }

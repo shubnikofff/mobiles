@@ -1,7 +1,7 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
-$db = require(__DIR__ . '/db.php');
+$local = require(__DIR__ . '/../config/web-local.php');
 
 return [
     'id' => 'basic-console',
@@ -36,17 +36,8 @@ return [
                 ],
             ],
         ],
-        'db' => [
-            'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=teleport;',
-            'username' => 'teleport',
-            'password' => 'MysqlTeleport',
-            'charset' => 'utf8',
-        ],
-        'mongodb' => [
-            'class' => '\yii\mongodb\Connection',
-            'dsn' => 'mongodb://localhost:27017/teleport',
-        ],
+        'db' => $local['components']['db'],
+        'mongodb' => $local['components']['mongodb'],
     ],
     'params' => $params,
 ];
