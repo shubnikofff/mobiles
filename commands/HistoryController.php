@@ -21,8 +21,6 @@ class HistoryController extends Controller
 {
     public function actionUpdate()
     {
-        //echo count(Number::find()->all());
-
         foreach(Number::find()->all() as $number) {
             $history = [];
             foreach($number->history as $item) {
