@@ -5,7 +5,7 @@ namespace app\modules\mobile\models;
 use Yii;
 use yii\data\ActiveDataProvider;
 use app\modules\directory\models\Employee;
-
+use yii\mongodb\validators\MongoIdValidator;
 /**
  * NumberSearch represents the model behind the search form about `app\modules\mobile\models\Number`.
  */
@@ -29,7 +29,8 @@ class NumberSearch extends Number
     {
         return [
             [['searchText', 'comment'], 'trim'],
-            [['operatorId', 'destination'], 'safe']
+            ['operatorId', MongoIdValidator::className(), 'forceFormat' => 'object'],
+            ['destination', 'safe']
         ];
     }
 
