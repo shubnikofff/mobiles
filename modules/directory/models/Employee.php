@@ -37,6 +37,7 @@ class Employee extends ActiveRecord
             'last_name',
             'first_name',
             'middle_name',
+            'organic_number',
             'post'
         ];
     }

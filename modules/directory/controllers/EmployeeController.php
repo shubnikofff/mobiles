@@ -10,9 +10,11 @@ namespace app\modules\directory\controllers;
 
 
 use app\modules\directory\models\Employee;
+use app\modules\directory\models\ImportForm;
 use yii\helpers\Json;
 use yii\web\Controller;
-//TODO:controller should be deleted
+use yii\web\UploadedFile;
+
 class EmployeeController extends Controller{
 
     public function actionAutoComplete($q = null) {
@@ -22,5 +24,18 @@ class EmployeeController extends Controller{
             $result[] = ['value' => $item->fullName, 'post' => $item->post];
         }
         echo Json::encode($result);
+    }
+
+    public function actionImport()
+    {
+        $model = new ImportForm();
+
+        if (\Yii::$app->request->isPost) {
+
+            $model->datafile = UploadedFile::getInstance($model, 'datafile');
+            $model->import();
+        }
+
+        return $this->render('import', ['model' => $model]);
     }
 }

@@ -40,6 +40,7 @@ AppAsset::register($this);
                     ['label' => 'База номеров', 'url' => ['/mobile/number/index']],
                     ['label' => 'Биллинг', 'url' => ['/mobile/billing/index']],
                     ['label' => 'Отчеты', 'url' => ['/mobile/report/index']],
+                    ['label' => 'Сотрудники', 'url' => ['/directory/employee/import']],
                     ['label' => 'Командировачные', 'url' => ['/mobile/trip/index']],
                     /*['label' => 'Написать нам', 'url' => ['/site/contact']],
                     Yii::$app->user->isGuest ?
