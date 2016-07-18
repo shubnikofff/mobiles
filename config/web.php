@@ -22,6 +22,9 @@ $config = [
         ],
         'datecontrol' =>  [
             'class' => '\kartik\datecontrol\Module'
+        ],
+        'gridview' => [
+            'class' => '\kartik\grid\Module'
         ]
     ],
     'components' => [

@@ -100,4 +100,13 @@ class NumberSearch extends Number
         return array_merge([self::DESTINATION_ANY => 'Любая'], parent::destinationItems());
     }
 
+    public function export()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => false
+        ]);
+        $dataProvider->query = Number::find()->with('owner')->where(['destination' => self::DESTINATION_PHONE]);
+        
+        return $dataProvider;
+    }
 }

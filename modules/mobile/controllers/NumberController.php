@@ -175,4 +175,10 @@ class NumberController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Number::ownerList($q);
     }
+
+    public function actionExport()
+    {
+        $model = new NumberSearch();
+        return $this->render('export',['dataProvider' => $model->export()]);
+    }
 }
