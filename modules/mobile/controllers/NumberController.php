@@ -38,12 +38,14 @@ class NumberController extends Controller
     {
         $searchModel = new NumberSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $exportDataProvider = $searchModel->export();
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_gridview', ['dataProvider' => $dataProvider]);
         }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'exportDataProvider' => $exportDataProvider
         ]);
     }
 
@@ -174,11 +176,5 @@ class NumberController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Number::ownerList($q);
-    }
-
-    public function actionExport()
-    {
-        $model = new NumberSearch();
-        return $this->render('export',['dataProvider' => $model->export()]);
     }
 }

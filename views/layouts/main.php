@@ -38,7 +38,6 @@ AppAsset::register($this);
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => [
                     ['label' => 'База номеров', 'url' => ['/mobile/number/index']],
-                    ['label' => 'Экспорт', 'url' => ['/mobile/number/export']],
                     ['label' => 'Биллинг', 'url' => ['/mobile/billing/index']],
                     ['label' => 'Отчеты', 'url' => ['/mobile/report/index']],
                     ['label' => 'Сотрудники', 'url' => ['/directory/employee/import']],

@@ -9,6 +9,7 @@ use yii\validators\NumberValidator;
 /**
  * Модель отчета
  *
+ * @property $_id
  * @property Operator $operator
  * @property \MongoId $operatorId
  * @property array $period
@@ -19,7 +20,10 @@ use yii\validators\NumberValidator;
  */
 class Report extends ActiveRecord
 {
-    public $items;
+    /**
+     * @var  ReportMaker
+     */
+    public $maker;
 
     /**
      * @return string
@@ -53,7 +57,6 @@ class Report extends ActiveRecord
         $this->outSideOperator = [];
         parent::init();
     }
-
 
     /**
      * @return array
@@ -89,19 +92,28 @@ class Report extends ActiveRecord
         return mktime(null, null, null, $this->period['month'], 1, $this->period['year']);
     }
 
-    public function getOverrunItems()
+    /**
+     * @return \yii\data\BaseDataProvider
+     */
+    public function itemsDataProvider()
     {
-        return $this->hasMany(ReportItem::className(), ['reportId' => '_id'])->where(['overrun' => ['$exists' => true]]);
+        return $this->maker->getDataProvider($this->primaryKey);
     }
 
-    public function getExpenditureItems($above = 3000)
+    /**
+     * @return array
+     */
+    public function itemsColumns()
     {
-        return $this->hasMany(ReportItem::className(), ['reportId' => '_id'])->where(['expenditure' => ['$gte' => $above]]);
+        return $this->maker->getColumns();
     }
 
-    public function getItems()
+    /**
+     * @return string
+     */
+    public function header()
     {
-        return $this->hasMany(ReportItem::className(), ['reportId' => '_id']);
+        return $this->maker->getReportHeader($this->operator->name, $this->getPeriodTimeStamp());
     }
 
     public function getOperator()
@@ -161,7 +173,7 @@ class Report extends ActiveRecord
         return $report;
     }
 
-    public function addItem(Number $number, $expenditure)
+    public function addItem($number, $expenditure)
     {
         $item = new ReportItem();
         $item['number'] = $number['number'];

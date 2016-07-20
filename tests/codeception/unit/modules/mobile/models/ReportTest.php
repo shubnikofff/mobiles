@@ -74,7 +74,7 @@ class ReportTest extends DbTestCase{
             $date = new MongoDate($operatorReport->getTimeStamp());
             $model = new Report([
                 'date' => $date,
-                'rawItems' => $operatorReport->getItems()
+                'rawItems' => $operatorReport->get()
             ]);
             expect($model->save())->true();
             $this->tester->seeInCollection(Report::collectionName(),[

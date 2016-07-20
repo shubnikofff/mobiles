@@ -2,10 +2,12 @@
 
 namespace app\modules\mobile\controllers;
 
-use Yii;
+use app\modules\mobile\models\ExpenditureReportMaker;
+use app\modules\mobile\models\OverrunReportMaker;
 use app\modules\mobile\models\Report;
 use app\modules\mobile\models\ReportSearch;
 use yii\helpers\Json;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -37,7 +39,7 @@ class ReportController extends Controller
     public function actionIndex()
     {
         $searchModel = new ReportSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        $dataProvider = $searchModel->search(\Yii::$app->request->get());
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -51,25 +53,24 @@ class ReportController extends Controller
      * @param string $type
      * @param integer $above
      * @return mixed
-     * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
-    public function actionView($id, $type, $above = null)
+    public function actionView($id, $type, $above = 3000)
     {
         $model = $this->findModel($id);
-
-        $reportSearch = new ReportSearch();
-        $reportSearch['type'] = $type;
-        $reportSearch['above'] = $above;
-        if(!$reportSearch->validate(['type','above'])) {
-            throw new NotFoundHttpException('Запрашиваемый отчет не найден.');
+        
+        switch ($type) {
+            case ReportSearch::TYPE_EXPENDITURE:
+                $model->maker = new ExpenditureReportMaker($above);
+                break;
+            case ReportSearch::TYPE_OVERRUN:
+                $model->maker = new OverrunReportMaker();
+                break;
+            default:
+                throw new BadRequestHttpException;
         }
-
-        $view = '_overrun';
-        if($type === ReportSearch::TYPE_EXPENDITURE) {
-            $view = '_expenditure';
-        }
-
-        return $this->render('view', ['reportView' => $view,'model'=>$model,'above'=>$above]);
+        
+        return $this->render('view', ['model' => $model]);
     }
 
     /**
@@ -96,9 +97,9 @@ class ReportController extends Controller
         }
 
         $report = Report::generate($mtsXML);
-        if($report instanceof Report) {
-            Yii::$app->session->setFlash('reportCreated', "Отчет &laquo;{$report->operator->name}&raquo; за "
-                . Yii::$app->formatter->asDate($report->getPeriodTimeStamp(), 'LLLL yyyy') . " успешно создан");
+        if ($report instanceof Report) {
+            \Yii::$app->session->setFlash('reportCreated', "Отчет &laquo;{$report->operator->name}&raquo; за "
+                . \Yii::$app->formatter->asDate($report->getPeriodTimeStamp(), 'LLLL yyyy') . " успешно создан");
             $this->redirect(['index']);
         } else {
             echo Json::encode(['error' => 'Не удалось создать отчет']);
@@ -109,9 +110,7 @@ class ReportController extends Controller
 
     public function actionRefreshOutsideDb($id)
     {
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_outsideDB', ['model' => $this->findModel($id)]);
-        }
+        return $this->renderAjax('_outsideDB', ['model' => $this->findModel($id)]);
     }
 
     /**
