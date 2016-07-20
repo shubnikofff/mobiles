@@ -58,7 +58,7 @@ class ExpenditureReportMaker implements ReportMaker
             'limit',
             [
                 'attribute' => 'expenditure',
-                'value' => function($item) {return str_replace('.',',',$item['expenditure']);}
+                'format' => 'decimal'
             ],
             'comment'
         ];

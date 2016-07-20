@@ -70,7 +70,8 @@ $outsideOperator = $model->getOutsideOperator();
             'showConfirmAlert' => false,
             'formatter' => [
                 'class' => \yii\i18n\Formatter::className(),
-                'nullDisplay' => ''
+                'nullDisplay' => '',
+                'decimalSeparator' => ','
             ],
             'filename' => $model->header(),
             'exportConfig' => [

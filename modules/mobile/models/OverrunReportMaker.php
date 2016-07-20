@@ -46,11 +46,11 @@ class OverrunReportMaker implements ReportMaker
             'limit',
             [
                 'attribute' => 'expenditure',
-                'value' => function($item) {return str_replace('.',',',$item['expenditure']);}
+                'format' => 'decimal'
             ],
             [
-                'attribute' => 'expenditure',
-                'value' => function($item) {return str_replace('.',',',$item['overrun']);}
+                'attribute' => 'overrun',
+                'format' => 'decimal'
             ],
             'comment'
         ];
