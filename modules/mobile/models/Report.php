@@ -245,5 +245,8 @@ class Report extends ActiveRecord
         }
     }
 
-
+    public function getItems()
+    {
+        return $this->hasMany(ReportItem::className(),['reportId' => '_id']);
+    }
 }
