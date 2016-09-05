@@ -71,7 +71,8 @@ $outsideOperator = $model->getOutsideOperator();
             'formatter' => [
                 'class' => \yii\i18n\Formatter::className(),
                 'nullDisplay' => '',
-                'decimalSeparator' => ','
+                'decimalSeparator' => ',',
+                'thousandSeparator' => ''
             ],
             'filename' => $model->header(),
             'exportConfig' => [
