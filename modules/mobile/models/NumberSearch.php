@@ -105,7 +105,7 @@ class NumberSearch extends Number
         $dataProvider = new ActiveDataProvider([
             'pagination' => false
         ]);
-        $dataProvider->query = Number::find()->with('owner')->where(['destination' => self::DESTINATION_PHONE]);
+        $dataProvider->query = Number::find()->with('owner');
         
         return $dataProvider;
     }
